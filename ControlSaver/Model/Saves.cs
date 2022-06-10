@@ -24,9 +24,10 @@ namespace ControlSaver.Model
             { 
                 Directory.CreateDirectory(saveDir);
                 File.Create(savefile).Close();
+                EmptyDir();
                 
             }
-            if (!File.Exists(savefile)) { File.Create(savefile).Close(); }
+            if (!File.Exists(savefile)) { File.Create(savefile).Close(); EmptyDir(); }
             string maindir = Path.GetDirectoryName(saveDir);
             foreach (string d in Directory.GetDirectories(maindir))
             {
@@ -180,18 +181,13 @@ namespace ControlSaver.Model
                 CopyDirectory(last_dir, new_dir);
             }
         }
-
+        //эта функция вызывается, если приложение запустилось в первыё раз
         public void EmptyDir()
         {
             string name = "save1";
             activeSave = 0;
-            collection.Add(new save(name, true));
-            StreamWriter file = new StreamWriter(savefile, true);
-            file.WriteLine(name + "is active");
-            file.Close();
-            string dir = GetDir(0);
-            Directory.CreateDirectory(dir);
-            CopyDirectory(activeDir, dir);
+            AddSave(name, activeDir);
+            Activate(0);
         }
 
         public bool IsActive(string name)
@@ -203,6 +199,7 @@ namespace ControlSaver.Model
             return false;
         }
 
+        // копирует папку с охранениями
         public void CopyToDesktop(int num)
         {
             string DesktopDir = @"C:\Users\" + Environment.UserName + @"\Desktop\Save from Control";
@@ -211,6 +208,7 @@ namespace ControlSaver.Model
         }
     }
 
+    //класс для коллекции
     class save
     {
         public string Name;
