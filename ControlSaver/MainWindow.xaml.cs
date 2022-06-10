@@ -112,7 +112,7 @@ namespace ControlSaver
             IC.Items.RemoveAt(openNum);
             model.Del(openNum);
         }
-
+        //вызов переименования из контекстного меню
         private void CmReName(object sender, RoutedEventArgs e)
         {
             Button btn = IC.Items.GetItemAt(openNum) as Button;
@@ -122,7 +122,7 @@ namespace ControlSaver
             IC.Items.Insert(openNum, textBox);
             textBox.Focus();
         }
-
+        //активация сохранения
         private void Activate(object sender, RoutedEventArgs e)
         { 
             if (model.activeSave != -1)
@@ -148,12 +148,14 @@ namespace ControlSaver
            
         }
 
+        //присвоение переменной класса номер элемента, вызвавшего контекстное меню
         private void Button_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             Button btn = sender as Button;
             openNum = IC.Items.IndexOf(btn);
             
         }
+        //создание кнопки из экземпляра класса save
         private Button CreateBtn(save s)
         {
             Style style;
@@ -167,11 +169,13 @@ namespace ControlSaver
             }
             return new Button { Style=style, ContentStringFormat=s.Name};
         }
+        //копирует сохранение на рабочий стол
         private void CopyToDesktop(object sender, RoutedEventArgs e)
         {
             model.CopyToDesktop(openNum);
         }
 
+        //открывает папку с сохранениями
         private void OpenSaveFolder(object sender, RoutedEventArgs e)
         {
             Process.Start("explorer.exe", @"C:\Users\" + Environment.UserName + @"\AppData\Local\Remedy\Control");

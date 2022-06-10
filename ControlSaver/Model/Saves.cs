@@ -22,7 +22,7 @@ namespace ControlSaver.Model
             saveDir = Path.GetDirectoryName(savefile);
             if (!Directory.Exists(saveDir)) 
             { 
-                Directory.CreateDirectory(saveDir); 
+                Directory.CreateDirectory(saveDir);
                 File.Create(savefile).Close();
                 
             }
@@ -56,11 +56,13 @@ namespace ControlSaver.Model
             Collection = new ReadOnlyObservableCollection<save>(collection);
             Console.WriteLine(Collection.Count);
         }
+        //выдаёт папку сохранения исходя из номера сохранения
         private string GetDir(int num)
         {
             return Path.Combine(saveDir, "save" + num.ToString());
         }
 
+        //выдаёт номер сохранения исходя из имени
         private int GetNum(string name)
         {
             foreach (save save in collection)
@@ -73,6 +75,7 @@ namespace ControlSaver.Model
             return -1;
         }
 
+        //переписывает информацию в текстовом файле
         private void ReWrite()
         {
             StreamWriter file = new StreamWriter(savefile, false);
@@ -116,11 +119,6 @@ namespace ControlSaver.Model
             string old_path = GetDir(num);
             AddSave(Name, old_path);
         }
-        public void Del(string name)
-        {
-            int num = GetNum(name);
-            Del(num);
-        }
 
         public void Del(int num)
         {
@@ -138,27 +136,11 @@ namespace ControlSaver.Model
             }
         }
 
-        public void Rename(string oldName, string newName)
-        {
-            int num = GetNum(oldName);
-            collection[num].Name = newName;
-            ReWrite();
-        }
-
         public void Rename(int num, string newName)
         {
             string oldName = collection[num].Name;
             collection[num].Name = newName;
             ReWrite();
-        }
-
-        public bool IsExistName(string name)
-        {
-            if (GetNum(name) == -1)
-            {
-                return false;
-            }
-            return true;
         }
 
         public void Activate(int num)
@@ -175,6 +157,7 @@ namespace ControlSaver.Model
             ReWrite();
         }
 
+        //копирует файлы из одной директории в другую
         static private void CopyDirectory(string lastpath, string new_path)
         {
             Directory.Delete(new_path, true);
