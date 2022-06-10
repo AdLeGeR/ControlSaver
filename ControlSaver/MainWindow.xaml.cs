@@ -182,6 +182,11 @@ namespace ControlSaver
         {
             Process.Start("explorer.exe", @"C:\Users\" + Environment.UserName + @"\AppData\Local\Remedy\Control");
         }
+
+        private void SavingActiveSave(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
 

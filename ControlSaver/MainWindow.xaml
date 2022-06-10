@@ -174,27 +174,35 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <ContextMenu x:Key="DarkMenu">
+
+        <Style TargetType="ContextMenu" x:Key="DarkMenu"
+                    BasedOn="{StaticResource DarkControl}">
+            <Setter Property="Opacity" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ContextMenu">
+                        <Border BorderThickness="2" BorderBrush="#4F4F4F" Background="#161616">
+                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" Margin="2">
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <ContextMenu x:Key="Menu1" Style="{StaticResource DarkMenu}">
             <MenuItem Header="Копировать" Click="CopySave" />
             <MenuItem Header="Переименовать" Click="CmReName"/>
             <MenuItem Header="Удалить" Click="Delete"/>
             <MenuItem Header="Копировать на рабочий стол" Click="CopyToDesktop"/>
-            <ContextMenu.Style>
-                <Style TargetType="ContextMenu"
-                    BasedOn="{StaticResource DarkControl}">
-                    <Setter Property="Opacity" Value="1"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ContextMenu">
-                                <Border BorderThickness="2" BorderBrush="#4F4F4F" Background="#161616">
-                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" Margin="2">
-                                    </StackPanel>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ContextMenu.Style>
+        </ContextMenu>
+
+        <ContextMenu x:Key="Menu2" Style="{StaticResource DarkMenu}">
+            <MenuItem Header="Сохранить" Click="SavingActiveSave"/>
+            <MenuItem Header="Копировать" Click="CopySave" />
+            <MenuItem Header="Переименовать" Click="CmReName"/>
+            <MenuItem Header="Удалить" Click="Delete"/>
+            <MenuItem Header="Копировать на рабочий стол" Click="CopyToDesktop"/>
         </ContextMenu>
 
         <Style x:Key="Save" TargetType="Button" BasedOn="{StaticResource DarkButton}">
@@ -210,7 +218,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            ContextMenu="{StaticResource DarkMenu}">
+                            ContextMenu="{StaticResource Menu1}">
                             <TextBlock Text="{TemplateBinding ContentStringFormat}"
                                        Foreground="{TemplateBinding Foreground}"
                                        FontSize="20"
@@ -250,7 +258,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            ContextMenu="{StaticResource DarkMenu}">
+                            ContextMenu="{StaticResource Menu1}">
                                 <TextBlock x:Uid="TextBlock"
                                        Text="{TemplateBinding ContentStringFormat}"
                                        Foreground="{TemplateBinding Foreground}"
@@ -329,8 +337,7 @@
                                 <Border x:Name="Border"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            ContextMenu="{StaticResource DarkMenu}">
+                            BorderThickness="{TemplateBinding BorderThickness}">
                                     <TextBlock Text="Открыть папку с cохранениями"
                                        Foreground="{TemplateBinding Foreground}"
                                        FontSize="20"

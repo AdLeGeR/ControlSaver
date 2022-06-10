@@ -57,6 +57,7 @@ namespace ControlSaver.Model
             Collection = new ReadOnlyObservableCollection<save>(collection);
             Console.WriteLine(Collection.Count);
         }
+
         //выдаёт папку сохранения исходя из номера сохранения
         private string GetDir(int num)
         {
@@ -159,28 +160,29 @@ namespace ControlSaver.Model
         }
 
         //копирует файлы из одной директории в другую
-        static private void CopyDirectory(string lastpath, string new_path)
+        static private void CopyDirectory(string from, string to)
         {
-            Directory.Delete(new_path, true);
-            Directory.CreateDirectory(new_path);
-            string[] dirs = Directory.GetDirectories(lastpath);
-            string[] files = Directory.GetFiles(lastpath);
+            Directory.Delete(to, true);
+            Directory.CreateDirectory(to);
+            string[] dirs = Directory.GetDirectories(from);
+            string[] files = Directory.GetFiles(from);
             foreach (string s in files)
             {
                 string file = Path.GetFileName(s);
-                string destFile = Path.Combine(new_path, file);
+                string destFile = Path.Combine(to, file);
 
                 File.Copy(s, destFile);
             }
             foreach (string s in dirs)
             {
                 string dir = new DirectoryInfo(s).Name;
-                string last_dir = Path.Combine(lastpath, dir);
-                string new_dir = Path.Combine(new_path, dir);
+                string last_dir = Path.Combine(from, dir);
+                string new_dir = Path.Combine(to, dir);
                 Directory.CreateDirectory(new_dir);
                 CopyDirectory(last_dir, new_dir);
             }
         }
+
         //эта функция вызывается, если приложение запустилось в первыё раз
         public void EmptyDir()
         {
@@ -190,21 +192,17 @@ namespace ControlSaver.Model
             Activate(0);
         }
 
-        public bool IsActive(string name)
-        {
-            if (activeSave == GetNum(name))
-            {
-                return true;
-            }
-            return false;
-        }
-
         // копирует папку с охранениями
         public void CopyToDesktop(int num)
         {
             string DesktopDir = @"C:\Users\" + Environment.UserName + @"\Desktop\Save from Control";
             Directory.CreateDirectory(DesktopDir);
             CopyDirectory(GetDir(num), DesktopDir);
+        }
+
+        public void SavingActiveSave(int num)
+        {
+            CopyDirectory(activeDir, GetDir(num));
         }
     }
 
