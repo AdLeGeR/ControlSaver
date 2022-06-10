@@ -220,5 +220,6 @@ namespace ControlSaver.Model
             activated = active;
         }
     }
+
 }
 

@@ -35,6 +35,7 @@ namespace ControlSaver
             
         }
 
+        //открывает диалог выбора папки
         private void Shoose_Way(object sender, RoutedEventArgs e)
         {
             var dlg = new CommonOpenFileDialog();
@@ -65,6 +66,7 @@ namespace ControlSaver
             IC.Items.Add(new Button { Style = (Style)Resources["AddButton"] });
         }
 
+        //создаёт путое сохранение и вызывает textblock с выбором имени
         private void SpaceSave(object sender, RoutedEventArgs e)
         {
             model.AddSave("Выберите имя");
@@ -183,7 +185,7 @@ namespace ControlSaver
     }
 
 
-
+    //мой собственный grid, размещающий элементы основываясь на количестве столбов и высоте ряда
     public class MyGrid : Panel
     {
         public static readonly DependencyProperty ColumnsProperty = DependencyProperty.Register("Columns", typeof(int), typeof(MyGrid), new FrameworkPropertyMetadata(1, FrameworkPropertyMetadataOptions.AffectsMeasure), ValidateColumns);
@@ -303,7 +305,6 @@ namespace ControlSaver
                     cell.Y += cell.Height;
                 }
             }
-            //Size rezult = new Size(finalSize.Width, cell.Y + cell.Height);
             return finalSize;
 
         }
