@@ -96,7 +96,7 @@ namespace ControlSaver
             IC.Items.RemoveAt(num);
             IC.Items.Insert(num, CreateBtn(model.Collection[num]));
         }
-
+        //копирование сохранения
         private void CopySave(object sender, RoutedEventArgs e)
         {
             Button btn = IC.Items.GetItemAt(openNum) as Button;
@@ -106,7 +106,7 @@ namespace ControlSaver
             textBox.Focus();
             model.CopySave(text, text);
         }
-
+        //удаление сохранения
         private void Delete(object sender, RoutedEventArgs e)
         {
             IC.Items.RemoveAt(openNum);
