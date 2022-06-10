@@ -1,0 +1,358 @@
+﻿<Window x:Class="ControlSaver.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ControlSaver"
+        mc:Ignorable="d"
+        Background="Black"
+        Title="ControlSaver" Height="450" Width="800">
+    
+    <Window.Resources>
+
+        <Style x:Key="DarkControl" TargetType="Control">
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="Background" Value="Black"/>
+            <Setter Property="Opacity" Value="0.8"/>
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Border.BorderBrush" Value="White"/>
+                    <Setter Property="Border.BorderThickness" Value="3"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="DarkButton" TargetType="Button" BasedOn="{StaticResource DarkControl}">
+            <Setter Property="Foreground" Value="Gray"/>
+            <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+            <Style.Triggers>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="Opacity" Value="1"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="White"/>
+                    <Setter Property="BorderThickness" Value="3"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="AddButton" TargetType="Button" BasedOn="{StaticResource DarkButton}">
+            <EventSetter Event="Click" Handler="Option"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <Border Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"/>
+                            <Rectangle Width="1" Height="20" 
+                                        HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                        Fill="{TemplateBinding BorderBrush}" Opacity="1"/>
+                            <Rectangle Width="20" Height="1" 
+                                        HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                        Fill="{TemplateBinding BorderBrush}" Opacity="1"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Style x:Key="ShooseWay" TargetType="Button" BasedOn="{StaticResource DarkButton}">
+            <EventSetter Event="Click" Handler="Shoose_Way"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Grid>
+                            <Border Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"/>
+                            <TextBlock Text="Выбрать папку" Foreground="White"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                       FontWeight="Bold" FontSize="13" TextWrapping="WrapWithOverflow" TextAlignment="Center"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SpaceSave" TargetType="Button" BasedOn="{StaticResource DarkButton}">
+            <EventSetter Event="Click" Handler="SpaceSave"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <Border Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"/>
+                            <TextBlock Text="Пустое сохранение" Foreground="White"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                       FontWeight="Bold" FontSize="13" TextWrapping="WrapWithOverflow" TextAlignment="Center"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Grid x:Key="Shooser1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Button Style="{StaticResource SpaceSave}"/>
+            <Button Grid.Row="1" Style="{StaticResource ShooseWay}"/>
+        </Grid>
+
+        <Style x:Key="ReName" TargetType="TextBox" BasedOn="{StaticResource DarkControl}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="MaxLength" Value="20"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <EventSetter Event="LostKeyboardFocus" Handler="ReName"/>
+            <EventSetter Event="KeyDown" Handler="TextBox_KeyDown"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                    Focusable="false"
+                                    HorizontalScrollBarVisibility="Hidden"
+                                    VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" TargetName="Border" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" TargetName="Border" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="White"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style TargetType="{x:Type MenuItem}">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Foreground" Value="#BEBEBE"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type MenuItem}">
+                        <Grid Name="Root" Height="27" Background="#161616">
+                            <ContentPresenter Name="HeaderHost" Margin="10,0,3,0" ContentSource="Header" RecognizesAccessKey="True" HorizontalAlignment="Left" VerticalAlignment="Center"
+                      TextOptions.TextRenderingMode="ClearType" TextBlock.FontSize="12" TextBlock.Foreground="{TemplateBinding Foreground}" TextOptions.TextFormattingMode="Display"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="Black"/>
+                                <Setter TargetName="HeaderHost" Property="TextBlock.Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#808080"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <ContextMenu x:Key="DarkMenu">
+            <MenuItem Header="Копировать" Click="CopySave" />
+            <MenuItem Header="Переименовать" Click="CmReName"/>
+            <MenuItem Header="Удалить" Click="Delete"/>
+            <MenuItem Header="Копировать на рабочий стол" Click="CopyToDesktop"/>
+            <ContextMenu.Style>
+                <Style TargetType="ContextMenu"
+                    BasedOn="{StaticResource DarkControl}">
+                    <Setter Property="Opacity" Value="1"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ContextMenu">
+                                <Border BorderThickness="2" BorderBrush="#4F4F4F" Background="#161616">
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" Margin="2">
+                                    </StackPanel>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ContextMenu.Style>
+        </ContextMenu>
+
+        <Style x:Key="Save" TargetType="Button" BasedOn="{StaticResource DarkButton}">
+            <Setter Property="Foreground" Value="Gray"/>
+            <EventSetter Event="Click" Handler="Activate"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <EventSetter Event="ContextMenuOpening" Handler="Button_ContextMenuOpening"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            ContextMenu="{StaticResource DarkMenu}">
+                            <TextBlock Text="{TemplateBinding ContentStringFormat}"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontSize="20"
+                                       FontWeight="Bold"
+                                       TextWrapping="Wrap"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       TextAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="Opacity" Value="1"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ActiveSave" TargetType="Button" BasedOn="{StaticResource DarkButton}">
+            <Setter Property="Foreground" Value="Gray"/>
+            <EventSetter Event="ContextMenuOpening" Handler="Button_ContextMenuOpening"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition Height="0.4*"/>
+                            </Grid.RowDefinitions>
+                            <Border x:Name="Border" Grid.RowSpan="2"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            ContextMenu="{StaticResource DarkMenu}">
+                                <TextBlock x:Uid="TextBlock"
+                                       Text="{TemplateBinding ContentStringFormat}"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontSize="20"
+                                       FontWeight="Bold"
+                                       TextWrapping="Wrap"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       TextAlignment="Center"/>
+                            </Border>
+                            <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="2,0,0,0">
+                                <Image x:Name="Romb" Source="Res/Romb.png" HorizontalAlignment="Right"
+                                       Margin="4"/>
+                                <TextBlock Text="Активировано" Grid.Row="1"
+                                       VerticalAlignment="Center" 
+                                       HorizontalAlignment="Center"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontWeight="Bold" />
+                            </StackPanel>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="Opacity" Value="1"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.2*"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="0.2*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.3*"/>
+            <RowDefinition/>
+            <RowDefinition Height="0.3*"/>
+        </Grid.RowDefinitions>
+        <Image Source="Res/back.png" Stretch="UniformToFill" 
+               Grid.ColumnSpan="3" Grid.RowSpan="3" 
+               Opacity="0.62" HorizontalAlignment="Center" 
+               VerticalAlignment="Center"/>
+        <ItemsControl Grid.Column="1" Grid.Row="1"
+                      x:Name="IC">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <local:MyGrid Columns="4"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.Template>
+                <ControlTemplate>
+                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                        <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </ItemsControl.Template>
+        </ItemsControl>
+        <Button Grid.Column="2" Grid.Row="1"
+                Click="OpenSaveFolder" Height="125" VerticalAlignment="Top"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource DarkButton}">
+                    <Setter Property="Foreground" Value="Gray"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="Border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            ContextMenu="{StaticResource DarkMenu}">
+                                    <TextBlock Text="Открыть папку с cохранениями"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontSize="20"
+                                       FontWeight="Bold"
+                                       TextWrapping="Wrap"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       TextAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="Opacity" Value="1"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+    </Grid>
+    
+</Window>

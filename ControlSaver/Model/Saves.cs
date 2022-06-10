@@ -1,0 +1,243 @@
+﻿
+using System;
+using System.Collections.ObjectModel;
+using System.IO;
+
+namespace ControlSaver.Model
+{
+    internal class Saves
+    {
+        private ObservableCollection<save> collection = new ObservableCollection<save>();
+
+        public ReadOnlyObservableCollection<save> Collection;
+        public int count { get { return collection.Count; } }
+        private string savefile;
+        private string saveDir;
+        private string activeDir;
+        public int activeSave = -1;
+
+        public Saves()
+        {
+            savefile = @"C:\Users\" + Environment.UserName + @"\AppData\Local\Remedy\Control\ControlSaver\ControlSave.txt";
+            saveDir = Path.GetDirectoryName(savefile);
+            if (!Directory.Exists(saveDir)) 
+            { 
+                Directory.CreateDirectory(saveDir); 
+                File.Create(savefile).Close();
+                
+            }
+            if (!File.Exists(savefile)) { File.Create(savefile).Close(); }
+            string maindir = Path.GetDirectoryName(saveDir);
+            foreach (string d in Directory.GetDirectories(maindir))
+            {
+                if (d != saveDir)
+                {
+                    activeDir = d;
+                }
+            }
+            int count = File.ReadAllLines(savefile).Length;
+            string[] lines = File.ReadAllLines(savefile);
+            for (int i = 0; i < count; i++)
+            {
+                string name = lines[i];
+                if (name.EndsWith(" is active"))
+                {
+                    string newname = name.Substring(0, name.Length - 9);
+                    collection.Add(new save(newname, true));
+                    activeSave = i;
+                }
+                else
+                {
+                    Console.WriteLine(name);
+                    collection.Add(new save(name, false));
+                }
+
+            }
+            Collection = new ReadOnlyObservableCollection<save>(collection);
+            Console.WriteLine(Collection.Count);
+        }
+        private string GetDir(int num)
+        {
+            return Path.Combine(saveDir, "save" + num.ToString());
+        }
+
+        private int GetNum(string name)
+        {
+            foreach (save save in collection)
+            {
+                if (save.Name == name)
+                {
+                    return collection.IndexOf(save);
+                }
+            }
+            return -1;
+        }
+
+        private void ReWrite()
+        {
+            StreamWriter file = new StreamWriter(savefile, false);
+            foreach (save save in collection)
+            {
+                if (GetNum(save.Name) == activeSave)
+                {
+                    file.WriteLine(save.Name + " is active");
+                }
+                else
+                {
+                    file.WriteLine(save.Name);
+                }
+            }
+            file.Close();
+        }
+
+        public void AddSave(string name)
+        {
+            int len = collection.Count;
+            collection.Add(new save(name, false));
+            StreamWriter file = new StreamWriter(savefile, true);
+            file.WriteLine(name);
+            file.Close();
+            string dir = GetDir(len);
+            Directory.CreateDirectory(dir);
+        }
+
+        public void AddSave(string name, string old_dir)
+        {
+            AddSave(name);
+            int num = collection.Count - 1;
+            string new_dir = GetDir(num);
+            CopyDirectory(old_dir, new_dir);
+
+        }
+
+        public void CopySave(string Name, string oldSave)
+        {
+            int num = GetNum(Name);
+            string old_path = GetDir(num);
+            AddSave(Name, old_path);
+        }
+        public void Del(string name)
+        {
+            int num = GetNum(name);
+            Del(num);
+        }
+
+        public void Del(int num)
+        {
+            if ( activeSave == num)
+            {
+                activeSave = -1;
+            }
+            string dir = GetDir(num);
+            Directory.Delete(dir, true);
+            collection.RemoveAt(num);
+            ReWrite();
+            for (int i = num+1; i <= collection.Count; i++)
+            {
+                Directory.Move(GetDir(i), GetDir(i - 1));
+            }
+        }
+
+        public void Rename(string oldName, string newName)
+        {
+            int num = GetNum(oldName);
+            collection[num].Name = newName;
+            ReWrite();
+        }
+
+        public void Rename(int num, string newName)
+        {
+            string oldName = collection[num].Name;
+            collection[num].Name = newName;
+            ReWrite();
+        }
+
+        public bool IsExistName(string name)
+        {
+            if (GetNum(name) == -1)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public void Activate(int num)
+        {
+            if (activeSave != -1) 
+            { 
+                int num2 = activeSave;
+                CopyDirectory(activeDir, GetDir(num2));
+                collection[num2].activated = false;
+            }
+            activeSave = num;
+            collection[num].activated = true;
+            CopyDirectory(GetDir(num), activeDir);
+            ReWrite();
+        }
+
+        static private void CopyDirectory(string lastpath, string new_path)
+        {
+            Directory.Delete(new_path, true);
+            Directory.CreateDirectory(new_path);
+            string[] dirs = Directory.GetDirectories(lastpath);
+            string[] files = Directory.GetFiles(lastpath);
+            foreach (string s in files)
+            {
+                string file = Path.GetFileName(s);
+                string destFile = Path.Combine(new_path, file);
+
+                File.Copy(s, destFile);
+            }
+            foreach (string s in dirs)
+            {
+                string dir = new DirectoryInfo(s).Name;
+                string last_dir = Path.Combine(lastpath, dir);
+                string new_dir = Path.Combine(new_path, dir);
+                Directory.CreateDirectory(new_dir);
+                CopyDirectory(last_dir, new_dir);
+            }
+        }
+
+        public void EmptyDir()
+        {
+            string name = "save1";
+            activeSave = 0;
+            collection.Add(new save(name, true));
+            StreamWriter file = new StreamWriter(savefile, true);
+            file.WriteLine(name + "is active");
+            file.Close();
+            string dir = GetDir(0);
+            Directory.CreateDirectory(dir);
+            CopyDirectory(activeDir, dir);
+        }
+
+        public bool IsActive(string name)
+        {
+            if (activeSave == GetNum(name))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public void CopyToDesktop(int num)
+        {
+            string DesktopDir = @"C:\Users\" + Environment.UserName + @"\Desktop\Save from Control";
+            Directory.CreateDirectory(DesktopDir);
+            CopyDirectory(GetDir(num), DesktopDir);
+        }
+    }
+
+    class save
+    {
+        public string Name;
+        public bool activated;
+
+        public save(string name, bool active)
+        {
+            Name = name;
+            activated = active;
+        }
+    }
+}
+
